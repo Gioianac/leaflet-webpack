@@ -1,6 +1,8 @@
 import {
   map as initMap,
   tileLayer,
+  icon,
+  marker,
 } from 'leaflet'
 
 import zoological from './tourism_zoo_data.geojson'
@@ -17,7 +19,22 @@ const zoo = geoJSON(zoological, {
   onEachFeature:(feature, layer) => layer.bindPopup(feature.properties.name)
 })
 
+// création de l'icone
+const zooIcon = icon({
+  iconUrl: 'animal-track.svg',
+  iconSize: [30, 30],
+  iconAnchor: [15, 15],
+})
+
+
+const markers = zoological.features
+  .map(feature => {
+    const [longitude, latitude] = feature.geometry.coordinates
+    return marker([latitude, longitude], { icon: zooIcon })
+      .bindPopup(feature.properties.name || 'NO NAME')
+  })
+
 
 osmCH.addTo(map)
-
-zoo.addTo(map)
+markers.forEach(marker => marker.addTo(map))
+// zoo.addTo(map)
